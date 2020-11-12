@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="css/addArtista-style.css">
+    <link rel="stylesheet" href="css/generic-style.css">
+
+
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Navbar</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active liForm">
+                <form th:action="@{/getEvents}" method="post" id="formGetEvents" class="navForm">
+                    <a  href="javascript:;" onclick="document.getElementById('formGetEvents').submit();" class="nav-link" >All Events</a>
+                </form>
+            </li>
+            <li class="nav-item active liForm">
+                <form th:action="@{/eventsOfArtist}" method="post" id="formGetFilterEvents" class="navForm">
+                    <a  href="javascript:;" onclick="document.getElementById('formGetFilterEvents').submit();" class="nav-link" >Filter Event</a>
+                </form>
+            </li>
+            <li class="nav-item active liForm">
+                <form th:action="@{/addClient}" method="post" id="formRegClient" class="navForm">
+                    <a  href="javascript:;" onclick="document.getElementById('formRegClient').submit();" class="nav-link" >Registrar Client</a>
+                </form>
+            </li>
+            <li class="nav-item active liForm">
+                <form th:action="@{/getClients}" method="post" id="formListClient"  class="navForm">
+                    <a  href="javascript:;" onclick="document.getElementById('formListClient').submit();" class="nav-link">Llistar Clients</a>
+                </form>
+            </li>
+            <li class="nav-item active liForm">
+                <form th:action="@{/addArtista}" method="post" id="formAddArtist"class="navForm">
+                    <a  href="javascript:;" onclick="document.getElementById('formAddArtist').submit();" class="nav-link">Afegir Artista</a>
+                </form>
+
+            </li>
+
+        </ul>
+    </div>
+</nav>
+
+    <form th:object="${artista}" th:action="@{/regArt}" method="post" class="formAdd border border-dark p-3 rounded" >
+
+        <h1 class="text-center text-primary">Register Artista</h1>
+        <div class="form-group">
+            <label for="inputNomBanda">Nom Artista/Banda</label>
+            <input type="text" class="form-control" id="inputNomBanda" placeholder="" th:field="*{nom}">
+        </div>
+
+        <div class="form-group">
+            <label for="inputMembresBanda">Membres</label>
+            <input type="text" class="form-control" id="inputMembresBanda" placeholder="" th:field="*{membres}">
+        </div>
+
+        <div class="form-group">
+            <label for="inputPhotoBanda">Url Photo</label>
+            <input type="url" class="form-control" id="inputPhotoBanda" placeholder="" th:field="*{urlPhoto}">
+        </div>
+        <button type="submit" class="btn btn-primary" id="butAddArt">Afegir</button>
+    </form>
+
+    <h1 class="text-center text-dark mt-4">Artistes:</h1>
+    <div class="container mt-4">
+        <div class="row">
+            <div th:each="artista, iStat:${llistaArtistes}" class="col-md-4">
+                <div class="card" style="width: 18rem;">
+                    <img th:src="${artista.urlPhoto}" class="card-img-top p-2" height="200" width="270">
+                    <div class="card-body">
+                        <div class="border border-dark rounded mb-3 p-2">
+                            <h5 class="card-title pBold">Nom: <span th:text="${artista.nom}" class="pNomal"></span></h5>
+                            <p class="card-text pBold">Membres: <span th:text="${artista.membres}" class="pNomal"></span></p>
+
+                            <form th:action="@{/openModalAddEvent}" method="post">
+                                <input type="hidden" th:value="${artista.id}"name="idArt">
+                                <button id="addEventBut" class="btn btn-primary" >Add Event</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div th:if="${showModalAddEvent == true} "id="modalAddEvent" class="modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Afegir Event</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form th:action="@{/addEvent}"  method="post">
+                        <div th:object="${event}">
+                            <div class="form-group">
+                                <label for="inputDataEvent">Data:</label>
+                                <input type="datetime-local" class="form-control w-100" id="inputDataEvent" aria-describedby="ufHelp" name="inputDataEvent">
+                                <small id="ufHelp" class="form-text text-muted">Introdueix la data i hora del Concert/event</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputPreuEvent">Preu</label>
+                                <input th:field="*{preu}" type="number" step="0.01" class="form-control" id="inputPreuEvent">
+                            </div>
+                        </div>
+
+                        <div th:object="${ubicacio}">
+                            <div class="form-group">
+                                <label for="inputCarrer">Carrer:</label>
+                                <input type="text" class="form-control" id="inputCarrer"aria-describedby="inputCarrer" th:field="*{carrer}"/>
+                            </div>
+
+                            <div class="form-group" >
+                                <label for="inputCiutatEv">Ciutat:</label>
+                                <input type="text" class="form-control" id="inputCiutatEv"aria-describedby="inputCiutatEv" th:field="*{ciutat}"/>
+                            </div>
+                            <div class="form-group" >
+                                <label for="inputPaisEv">Pais:</label>
+                                <input type="text" class="form-control" id="inputPaisEv"aria-describedby="inputCiutatEv" th:field="*{pais}"/>
+                            </div>
+                        </div>
+                        <input type="hidden" th:value="${idArt}" name="idArt">
+                        <button type="submit" class="btn btn-primary" id="butAddEvent">Desa Event</button>
+                    </form>
+
+                </div>
+
+                <div class="modal-footer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        $(document).ready(function(){
+
+            $("#modalAddEvent").modal('show');
+        });
+
+    </script>
+
+
+
+</body>
+</html>
